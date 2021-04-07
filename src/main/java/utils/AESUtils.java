@@ -26,6 +26,7 @@ public class AESUtils {
     /***默认向量常量**/
     public static final String IV = "1234567890123456";
     private final static Logger logger = LoggerFactory.getLogger(AESUtils.class);
+    public static final String pkey2 = "ifyoucanhearthisvoice,youarealon";
 
     /**
      * 使用PKCS7Padding填充必须添加一个支持PKCS7Padding的Provider
