@@ -1,5 +1,8 @@
 package utils;
 
+import test.BitCoinFluctuation;
+
+import java.io.IOException;
 import java.sql.*;
 import java.util.LinkedHashMap;
 import java.util.Random;
@@ -63,6 +66,32 @@ public class MarketManagerSQL {
             ps.setObject(1, random1);
             ps.setObject(2, random2);
             ps.setObject(3, random3);
+            int count = ps.executeUpdate();
+            return count;
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return -1;
+    }
+
+    public int autoUpdate2() throws InterruptedException {
+        double variation1 = 0.00;
+        double variation2 = 0.00;
+        double variation3 = 0.00;
+        try {
+            variation1 = BitCoinFluctuation.getVariation();
+            variation2 = BitCoinFluctuation.getVariation();
+            variation3 = BitCoinFluctuation.getVariation();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        String sql = "update market_manager set enthusiasm_rate = enthusiasm_rate + ?, optimism_rate = optimism_rate + ?, extreme_rate = extreme_rate + ? where managerid = 1";
+        PreparedStatement ps = null;
+        try {
+            ps = connection.prepareStatement(sql);
+            ps.setObject(1, variation1);
+            ps.setObject(2, variation2);
+            ps.setObject(3, variation3);
             int count = ps.executeUpdate();
             return count;
         } catch (SQLException throwables) {

@@ -40,14 +40,21 @@ public class Calculation {
                 ResultSet rs = ps.executeQuery();
                 double calculation = 0.00;
                 double statisticsPrice = 0.00;
+                Random ran2 = new Random();
+                ran2.setSeed(i+System.currentTimeMillis());
                 while (rs.next())
                 {
                     statisticsPrice = rs.getDouble("price");
                 }
                 LinkedHashMap priceMap = priceSQL.selectPriceByCoinId(i);
                 double currentPrice = (double) priceMap.get("price");
-                calculation = (currentPrice + statisticsPrice) / 2 ;
-
+                if(statisticsPrice > 0)
+                {
+                    calculation = (currentPrice + statisticsPrice ) / 2;
+                }else
+                {
+                    calculation = currentPrice;
+                }
                 LinkedHashMap priceManager = priceManagerSQL.selectManager(i);
                 LinkedHashMap marketManager = marketManagerSQL.selectManager();
                 double marketEht = 1.00;
@@ -97,30 +104,36 @@ public class Calculation {
                     priceCeiling = (double)priceManager.get("priceceiling");
                 }
                 Random random = new Random();
+                String[] ranDate = formatDateBegin.split("-");
+                String dateRandom = "";
+                for(String a : ranDate)
+                    dateRandom+=a;
+                long l1 = Integer.parseInt(dateRandom);
+                random.setSeed(l1 + i);
                 if(marketEht >= 0)
                 {
                     double range = marketEht - 1.00;
-                    calculation += range * random.nextInt(10) * 0.0002 * calculation;
+                    calculation += range * ran2.nextInt(10) * 0.0001 * calculation;
                 }
                 if(marketOpt >= 0)
                 {
                     double range = marketOpt - 1.00;
-                    calculation += range * random.nextInt(10) * 0.0004 * calculation;
+                    calculation += range * ran2.nextInt(10) * 0.0001 * calculation;
                 }
                 if(marketExt >= 0)
                 {
                     double range = marketExt - 1.00;
-                    calculation += range * random.nextInt(10) * 0.0006 * calculation;
+                    calculation += range * ran2.nextInt(10) * 0.0001 * calculation;
                 }
                 if(priceEht >= 0)
                 {
                     double range = priceEht - 1.00;
-                    calculation += range * random.nextInt(10) * 0.002 * calculation;
+                    calculation += range * ran2.nextInt(10) * 0.002 * calculation;
                 }
                 if(priceOpt >= 0)
                 {
                     double range = priceOpt - 1.00;
-                    calculation += range * random.nextInt(10) * 0.004 * calculation;
+                    calculation += range * ran2.nextInt(10) * 0.004 * calculation;
                 }
                 if(timeRange!=null)
                 {
@@ -145,7 +158,7 @@ public class Calculation {
                         if(betweenDays * step > toBeChange)
                         {
 
-                        }else
+                        } if(betweenDays * step < toBeChange)
                         {
                             calculation += step;
                         }
@@ -162,6 +175,14 @@ public class Calculation {
                     if(calculation > priceCeiling)
                         calculation = priceCeiling;
                 }
+                int ranIncr = random.nextInt(100);
+                if(ranIncr < 50)
+                {
+                    calculation = calculation - (calculation * ranIncr * 0.00002);
+                }else
+                {
+                    calculation = calculation + (calculation * ranIncr * 0.00002);
+                }
                 if(calculation <= 0)
                 {
                     calculation = 0.01;
@@ -174,7 +195,7 @@ public class Calculation {
                 ps2.close();
             } catch (Exception e)
             {
-                System.out.println(e);
+                e.printStackTrace();
             }
         }
     }

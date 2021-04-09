@@ -25,19 +25,19 @@ public class MarketManagerThread implements Runnable{
 
     @Override
     public void run() {
-        int count = 0;
+        int count = 10;
         while (flag)
         {
             try {
-                marketManagerSQL.autoUpdate();
-                count++;
-                if(count >= 100)
+                if(count >= 10)
                 {
                     marketManagerSQL.resetMarketManager();
                     count = 0;
                     System.out.println(name+" reset the Market Manager");
                 }
-                Thread.sleep(2000);
+                marketManagerSQL.autoUpdate2();
+                count++;
+                Thread.sleep(5000);
             } catch (Exception e)
             {
                 System.out.println(e);
